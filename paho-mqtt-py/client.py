@@ -1,3 +1,4 @@
+
 import paho.mqtt.client as mqtt
 
 
@@ -14,15 +15,20 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print(msg.topic + " " + str(msg.payload))
 
+def set_up_client():
+    client =mqtt.Client(client_id="", clean_session=True, userdata=None, protocol=mqtt.MQTTv311, transport="tcp")
+    client.on_connect = on_connect
+    client.on_message = on_message
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
+    client.connect("192.168.100.212", 12306, 60)
+    client.loop_forever()
 
-client.connect("mqtt.eclipse.org", 1883, 60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
-client.loop_forever()
+
+
+if __name__ == '__main__':
+    set_up_client()
