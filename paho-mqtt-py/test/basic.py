@@ -20,7 +20,7 @@ class MyTestCase(unittest.TestCase):
         print(msg.topic + " " + str(msg.payload))
 
     def test_connect(self):
-        self.client.connect("192.168.100.212", 12306, 60)
+        self.client.connect("127.0.0.1", 1883, 60)
 
     def test_subscribe(self):
         pass
