@@ -63,7 +63,7 @@ def set_up_client():
     client_pub.publish(topic="mytopic1", payload="hello, there", qos=0, retain=True)  # retain topic
     # client_pub.publish(topic="mytopic11", payload="This is topic11", qos=1, retain=True)
     # client_pub.publish(topic="mytopic12", payload="This is topic12", qos=2, retain=True)
-    # client_pub.publish(topic="mytopic13", payload="This is topic13", qos=1, retain=True)   # qos错误示例
+    # client_pub.publish(topic="mytopic13", payload="This is topic13", qos=3, retain=True)   # qos错误示例
 
     client_sub.publish(topic="mytopic2", payload="This is topic2", qos=0, retain=False)  # not retain topic
 
