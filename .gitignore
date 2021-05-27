@@ -3,3 +3,4 @@ paho-mqtt-py/.idea/
 paho-mqtt-py/paho.mqtt.python/
 paho-mqtt-py/venv/
 venv/
+log

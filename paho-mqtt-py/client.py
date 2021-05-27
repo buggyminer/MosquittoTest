@@ -13,8 +13,6 @@ def on_publish(client, userdata, mid):
     print("Client:(" + str(client._client_id, encoding="utf-8") + ") published topic with message id(" + str(
         mid) + ")")
 
-
-
 def on_subscribe(client, userdata, mid, granted_qos):
     print("Client:(" + str(client._client_id, encoding="utf-8") + ") subscribe message: mid(" + str(
         mid) + ") with Qos " + str(granted_qos[0]) + " successfully ")
