@@ -63,8 +63,6 @@ def set_up_client():
     client_pub.connect("127.0.0.1", 1883, 60)
     client_sub.connect("127.0.0.1", 1883, 60)
 
-    time.sleep(1)
-
     # publish
     client_pub.publish(topic="mytopic1", payload="hello, there", qos=0, retain=True)  # retain topic
     # client_pub.publish(topic="mytopic11", payload="This is topic11", qos=1, retain=True)
@@ -77,7 +75,7 @@ def set_up_client():
     # client_pub.subscribe("mytopic1", 0)  # 自我订阅
     client_sub.subscribe("Hello", 0)  # 其他订阅者客户端订阅
     # client_sub.subscribe("mytopic1", 1)  # Qos level wrong
-    #client_sub.subscribe([("mytopic1", 0), ("mytopic2", 0)])    # 一箭多星
+    client_sub.subscribe([("mytopic1", 0), ("mytopic2", 0)])    # 一箭多星
 
     # unsubscribe
     client_pub.unsubscribe("mytopic1")
