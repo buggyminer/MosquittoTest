@@ -78,12 +78,13 @@ def client_init(name_str, url, port):
     return client
 
 
-def pub_msg(client=None, topic=""):
+def loop(client=None, topic=""):
     if client == None:
         os.system('mosquitto_pub -t '+topic+' -h localhost -m "'+topic+'"')
         return
     client.loop_start()
-    os.system('mosquitto_pub -t '+topic+' -h localhost -m "'+topic+'"')
+    if topic!="":
+        os.system('mosquitto_pub -t '+topic+' -h localhost -m "'+topic+'"')
     sleep(1)
     client.loop_stop()
 
@@ -106,16 +107,12 @@ class TestSubUnit(unittest.TestCase):
         client = client_init(client_id, self.url, self.port)
         client.subscribe(self.new_topic, qos=qos)
 
-        client.loop_start()
-        sleep(1)
-        client.loop_stop()
+        loop(client)
         self.assertEqual(read_file(), get_subscribe_str(client_id, qos))
 
         client.unsubscribe(self.new_topic)
 
-        client.loop_start()
-        sleep(1)
-        client.loop_stop()
+        loop(client)
         self.assertEqual(read_file(), get_unsubscribe_str(client_id))
 
         client.disconnect()
@@ -126,9 +123,7 @@ class TestSubUnit(unittest.TestCase):
         client = client_init(client_id, self.url, self.port)
         client.subscribe(self.exist_topic, qos=qos)
 
-        client.loop_start()
-        sleep(1)
-        client.loop_stop()
+        loop(client)
         self.assertEqual(read_file(), get_subscribe_str(client_id, qos))
 
         client.unsubscribe(self.exist_topic)
@@ -140,29 +135,23 @@ class TestSubUnit(unittest.TestCase):
         client = client_init(client_id, self.url, self.port)
         client.subscribe([(self.exist_topic, qos), (self.common_topic, qos)])
 
-        client.loop_start()
-        sleep(1)
-        client.loop_stop()
+        loop()
         self.assertEqual(read_file(), get_subscribe_str(client_id, qos))
 
         client.unsubscribe(self.exist_topic)
 
-        client.loop_start()
-        sleep(1)
-        client.loop_stop()
+        loop()
         self.assertEqual(read_file(), get_unsubscribe_str(client_id))
 
         client.unsubscribe(self.common_topic)
 
-        client.loop_start()
-        sleep(1)
-        client.loop_stop()
+        loop()
         self.assertEqual(read_file(), get_unsubscribe_str(client_id))
 
         client.disconnect()
 
     def test_publish_without_subscribe(self):
-        pub_msg(topic=self.exist_topic)
+        loop(topic=self.exist_topic)
 
         client_id = "test_publish_without_subscribe"
         qos = self.qos0
@@ -171,9 +160,7 @@ class TestSubUnit(unittest.TestCase):
             "test_publish_without_subscribe", self.url, self.port)
         client.subscribe(self.exist_topic, qos=self.qos0)
 
-        client.loop_start()
-        sleep(1)
-        client.loop_stop()
+        loop()
         self.assertEqual(read_file(), get_subscribe_str(client_id, qos))
 
         client.unsubscribe(self.exist_topic)
@@ -186,7 +173,7 @@ class TestSubUnit(unittest.TestCase):
         client = client_init(client_id, self.url, self.port)
         client.subscribe(self.common_topic, qos=qos)
 
-        pub_msg(client, self.common_topic)
+        loop(client, self.common_topic)
         self.assertEqual(read_file(), get_message(
             client_id, self.common_topic, self.common_topic))
 
@@ -199,11 +186,11 @@ class TestSubUnit(unittest.TestCase):
         client = client_init(client_id, self.url, self.port)
         client.subscribe([(self.exist_topic, qos), (self.common_topic, qos)])
 
-        pub_msg(client, self.exist_topic)
+        loop(client, self.exist_topic)
         self.assertEqual(read_file(), get_message(
             client_id, self.exist_topic, self.exist_topic))
 
-        pub_msg(client, self.common_topic)
+        loop(client, self.common_topic)
         self.assertEqual(read_file(), get_message(
             client_id, self.common_topic, self.common_topic))
 
@@ -229,11 +216,11 @@ class TestSubUnit(unittest.TestCase):
         # self.assertEqual(read_file(), get_message(
         #     client_id_b, self.common_topic, self.common_topic))
 
-        pub_msg(client_a, self.common_topic+'/a')
+        loop(client_a, self.common_topic+'/a')
         self.assertEqual(read_file(), get_message(
             client_id_a, self.common_topic+'/a', self.common_topic+'/a'))
 
-        pub_msg(client_b, self.common_topic+'/b')
+        loop(client_b, self.common_topic+'/b')
         self.assertEqual(read_file(), get_message(
             client_id_b, self.common_topic+'/b', self.common_topic+'/b'))
 
@@ -248,7 +235,7 @@ class TestSubUnit(unittest.TestCase):
         client = client_init(client_id, self.url, self.port)
         client.subscribe(self.common_topic, qos=qos)
 
-        pub_msg(client, self.common_topic)
+        loop(client, self.common_topic)
         self.assertEqual(read_file(), get_message(
             client_id, self.common_topic, self.common_topic))
 
