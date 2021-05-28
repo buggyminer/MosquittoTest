@@ -88,7 +88,6 @@ def loop(client=None, topic=""):
     sleep(1)
     client.loop_stop()
 
-
 class TestSubUnit(unittest.TestCase):
 
     url = "127.0.0.1"
