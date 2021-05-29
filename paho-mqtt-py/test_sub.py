@@ -139,6 +139,12 @@ class TestSubUnit(unittest.TestCase):
         loop(client)
         self.assertEqual(read_file(), get_subscribe_str(client_id, qos))
 
+        loop(client, self.exist_topic)
+        self.assertEqual(read_file(), get_message(client_id, self.exist_topic, self.exist_topic))
+
+        loop(client, self.common_topic)
+        self.assertEqual(read_file(), get_message(client_id, self.common_topic, self.common_topic))
+
         client.unsubscribe(self.exist_topic)
 
         loop(client)
@@ -209,21 +215,26 @@ class TestSubUnit(unittest.TestCase):
         client_a.subscribe(self.common_topic + '/a', qos)
         client_b.subscribe(self.common_topic + '/b', qos)
 
-        # pub_msg(client_a, self.common_topic)
-        # self.assertEqual(read_file(), get_message(
-        #     client_id_a, self.common_topic, self.common_topic))
+        client_a.loop_start()
+        client_b.loop_start()
 
-        # pub_msg(client_b, self.common_topic)
-        # self.assertEqual(read_file(), get_message(
-        #     client_id_b, self.common_topic, self.common_topic))
+        os.system('mosquitto_pub -t ' + self.common_topic+'/a' + ' -h localhost -m "' + self.common_topic+'/a' + '"')
 
-        loop(client_a, self.common_topic + '/a')
+        sleep(1)
+
         self.assertEqual(read_file(), get_message(
             client_id_a, self.common_topic + '/a', self.common_topic + '/a'))
 
-        loop(client_b, self.common_topic + '/b')
+        os.system(
+            'mosquitto_pub -t ' + self.common_topic + '/b' + ' -h localhost -m "' + self.common_topic + '/b' + '"')
+
+        sleep(1)
+
         self.assertEqual(read_file(), get_message(
             client_id_b, self.common_topic + '/b', self.common_topic + '/b'))
+
+        client_a.loop_stop()
+        client_b.loop_stop()
 
         client_a.unsubscribe(self.common_topic + '/a')
         client_b.unsubscribe(self.common_topic + '/b')
@@ -239,14 +250,6 @@ class TestSubUnit(unittest.TestCase):
         loop(client, self.common_topic)
         self.assertEqual(read_file(), get_message(
             client_id, self.common_topic, self.common_topic))
-
-        # pub_msg(client, self.common_topic+'/a')
-        # self.assertEqual(read_file(), get_message(
-        #     client_id, self.common_topic+'/a', self.common_topic+'/a'))
-
-        # pub_msg(client, self.common_topic+'/b')
-        # self.assertEqual(read_file(), get_message(
-        #     client_id, self.common_topic+'/b', self.common_topic+'/b'))
 
         client.unsubscribe(self.common_topic)
         client.disconnect()
