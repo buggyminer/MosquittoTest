@@ -27,3 +27,11 @@ python setup.py install
 ```shell
 git clone https://github.com/eclipse/paho.mqtt.testing.git
 ```
+
+## 测试环境配置
+
+若有虚拟环境，则在虚拟环境下
+
+```shell
+pip install unittest
+```
